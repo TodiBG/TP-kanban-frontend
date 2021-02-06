@@ -1,0 +1,64 @@
+.row{
+    width: 100%;
+}
+.user-tab{
+    width: 90%;
+    margin: auto;
+}
+
+
+.table{
+    border: 1px solid dimgray;
+
+}
+
+#list-panel-right{
+    margin-bottom: 20px;
+    height: 560px;
+    overflow: auto;
+    padding: 50px;
+    padding-top: 20px;
+}
+
+#list-panel-left{
+    margin-bottom: 20px;
+    max-height: 560px;
+    overflow: auto;
+}
+
+#list-panel-left .row{width: 100%;
+}
+
+#user-tab th {
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 0;
+    background-color:lightseagreen;
+    color: white;
+}
+
+#user-list-title{
+    width: 100%;
+    text-align: center;
+    font-size: 1.5em;
+    margin-top: 20px;
+}
+
+#fiche-tab{
+}
+
+form{
+    border: 1px solid rgb(145, 143, 143);
+    padding: 10px;
+    margin-bottom: 15px;
+
+
+}
+
+form .label{
+    font-size: 1.6em;
+}
+
+form button {
+    background-color:lightseagreen;
+}

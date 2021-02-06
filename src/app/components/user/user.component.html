@@ -1,0 +1,118 @@
+<div class="row content " >
+
+    <div id="list-panel-left" class="col-sm-7  ">
+
+        <h3 id="user-list-title"> La liste des utiliateurs </h3>
+
+        <table id="user-tab" mat-table [dataSource]="dataSource" class="table" >
+
+            <!-- Position Column -->
+            <ng-container matColumnDef="nom">
+              <th mat-header-cell *matHeaderCellDef> No. </th>
+              <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+            </ng-container>
+        
+            <!-- Name Column -->
+            <ng-container matColumnDef="prenom">
+              <th mat-header-cell *matHeaderCellDef> Nom </th>
+              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+        
+            <!-- Weight Column -->
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef> Prenom </th>
+              <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
+            </ng-container>
+        
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="symbol">
+              <th mat-header-cell *matHeaderCellDef> Email </th>
+              <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
+            </ng-container>
+        
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        
+    </div>
+
+
+
+
+    <div  id="list-panel-right" class="col-sm-5" >
+
+
+      <form class="row">
+
+        <p class="label"> Enregistrer un nouvel utilisateur </p>
+
+        <div class="col-sm-1"> </div>
+        
+        <div class="col-sm-7"> 
+   
+          <div class="form-group">
+            <input name="nom" class="form-control" type="text" placeholder="Nom">
+          </div>
+
+          <div class="form-group">
+            <input name="prenom" class="form-control" type="text" placeholder="Prenom">
+          </div>
+          <div class="form-group">
+            <input name="email" class="form-control" type="email" placeholder="Email">
+          </div>
+
+        </div>
+
+        <div class="col-sm-4"> 
+          <div class="form-group"><br> <br>
+          </div>
+
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary">Enregister</button>
+
+          </div>
+
+
+        </div>
+
+    </form>
+
+
+      <div class="row">  
+        <table id="fiche-tab" mat-table [dataSource]="dataSource_fiche" class="table col-sm-12" >
+
+          <!-- Position Column -->
+          <ng-container matColumnDef="nom">
+            <th mat-header-cell *matHeaderCellDef> No. </th>
+            <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+          </ng-container>
+      
+          <!-- Name Column -->
+          <ng-container matColumnDef="prenom">
+            <th mat-header-cell *matHeaderCellDef> Nom </th>
+            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+          </ng-container>
+      
+          <!-- Weight Column -->
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef> Prenom </th>
+            <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
+          </ng-container>
+      
+          <!-- Symbol Column -->
+          <ng-container matColumnDef="symbol">
+            <th mat-header-cell *matHeaderCellDef> Email </th>
+            <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
+          </ng-container>
+      
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+
+
+    </div>
+
+
+
+</div>
