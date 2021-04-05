@@ -1,6 +1,99 @@
 <div class="content">
 
-  <p>tag works!</p>
+ 
+
+
+
+
+
+  <div class="content">
+    <br> <br>
+     <p-toast></p-toast>
+    
+    <div class="card">
+        <p-toolbar styleClass="p-mb-4">
+            <ng-template pTemplate="left">
+                <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
+                <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedTags()" [disabled]="!selectedTags || !selectedTags.length"></button>
+            </ng-template>
+    
+            <ng-template pTemplate="right">
+                <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"></button>
+            </ng-template>
+        </p-toolbar>
+    
+    <br>
+        <p-table #dt [value]="tags" [rows]="5" [paginator]="true" [globalFilterFields]="['id','libelle']"
+            [(selection)]="selectedTags" [rowHover]="true" dataKey="id"
+            currentPageReportTemplate="{first} à {last} des {totalRecords} tags" [showCurrentPageReport]="true">
+         
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 3rem">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                    <th pSortableColumn="id">Id  </th>
+                    <th pSortableColumn="libelle">Libellé </th>
+                   
+    
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-tag>
+                <tr>
+                    <td>
+                        <p-tableCheckbox [value]="tag"></p-tableCheckbox>
+                    </td>
+                    <td>{{tag.id}}</td>
+                    <td>{{tag.libelle}}</td>
+                    <td>
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="editTag(tag)"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteTag(tag)"></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+                <div class="p-d-flex p-ai-center p-jc-between">
+                    Il y a au total {{tags ? tags.length : 0 }} tags.
+                </div>
+            </ng-template>
+        </p-table>
+    </div>
+    
+    <p-dialog [(visible)]="tagDialog" [style]="{width: '450px'}" header="Details du tag" [modal]="true" styleClass="p-fluid">
+        <ng-template pTemplate="content">
+            <div class="p-field">
+                <label for="libelle">Libellé</label>
+                <input type="text" pInputText id="libelle" [(ngModel)]="tag.libelle" required autofocus />
+                <small class="p-invalid" *ngIf="submitted && !tag.libelle">Le libellé est obligatoire .</small>
+            </div>
+           
+        </ng-template>
+        
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+            <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveTag()"></button>
+        </ng-template>
+    </p-dialog>
+    
+    
+    <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+    
+     
+    
+    
+    
+          
+    </div>
+        
+    
+
+
+
+
+
+
+
 
 
 </div>

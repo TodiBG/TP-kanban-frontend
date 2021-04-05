@@ -1,6 +1,102 @@
 
+
 <div class="content">
-    <p>fiche works!</p>
+<br> <br>
+ <p-toast></p-toast>
+
+<div class="card">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
+            <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedFiches()" [disabled]="!selectedFiches || !selectedFiches.length"></button>
+        </ng-template>
+
+        <ng-template pTemplate="right">
+            <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"></button>
+        </ng-template>
+    </p-toolbar>
+
+<br>
+    <p-table #dt [value]="fiches" [rows]="5" [paginator]="true" [globalFilterFields]="['id','libelle','dateButoire','lieu','user.email']"
+        [(selection)]="selectedFiches" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="{first} à {last} des {totalRecords} fiches" [showCurrentPageReport]="true">
+     
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 3rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th pSortableColumn="id">Id <p-sortIcon field="id"></p-sortIcon></th>
+                <th pSortableColumn="libelle">Libellé <p-sortIcon field="libelle"></p-sortIcon></th>
+                <th pSortableColumn="dateButoire">Date butoire <p-sortIcon field="dateButoire"></p-sortIcon></th>
+                <th pSortableColumn="temps">Temps d'excution <p-sortIcon field="temps"></p-sortIcon></th>
+                <th pSortableColumn="lieu">Lieu <p-sortIcon field="lieu"></p-sortIcon></th>
+                <th pSortableColumn="url">URL </th>
+                <th pSortableColumn="note">Notes </th>
+                <th pSortableColumn="user">Utilisateur </th>
+                <th pSortableColumn="tags">Tags </th>
+                <th pSortableColumn="section">Section </th>
+                <th pSortableColumn="tab">Tableau  </th>
+
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-fiche>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="fiche"></p-tableCheckbox>
+                </td>
+                <td>{{fiche.id}}</td>
+                <td>{{fiche.libelle}}</td>
+                <td>{{fiche.dateButoire |date : 'dd/MM/YYYY' }}</td>
+                <td>{{fiche.temps}}</td>
+                <td>{{fiche.lieu}}</td>
+                <td>{{fiche.url}}</td>
+                <td>{{fiche.note}}</td>
+                <td>{{fiche.user.email}}</td>
+                <td>Tags</td>
+                <td>Section</td>
+                <td>Tab</td>
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="editFiche(fiche)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteFiche(fiche)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                Il y a au total {{fiches ? fiches.length : 0 }} fiches.
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="ficheDialog" [style]="{width: '450px'}" header="Details de la fiche" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="p-field">
+            <label for="libelle">Libellé</label>
+            <input type="text" pInputText id="libelle" [(ngModel)]="fiche.libelle" required autofocus />
+            <small class="p-invalid" *ngIf="submitted && !fiche.libelle">Le libellé est obligatoire .</small>
+        </div>
+        <div class="p-field">
+            <label for="dateButoire">Date butoire</label>
+            <input type="date" id="dateButoire" pInputTextarea [(ngModel)]="fiche.dateButoire" required />
+        </div>
+    </ng-template>
     
-    </div>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveFiche()"></button>
+    </ng-template>
+</p-dialog>
+
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+ 
+
+
+
+      
+</div>
     
