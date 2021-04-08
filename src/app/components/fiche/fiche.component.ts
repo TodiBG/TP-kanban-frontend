@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { KanbanService } from '../../services/kanban.service';
-import { Fiche } from '../../modeles/kanban';
+import { Fiche, User, Tag, Tableau, Section } from '../../modeles/kanban';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-fiche',
@@ -10,29 +11,65 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 })
 export class FicheComponent implements OnInit {
 
-    ficheDialog!: boolean;
+    createFicheDialog = false;
+    editFicheDialog = false;
+
+    selectedCity: any;
+    selectedCities!: any[];
 
     fiches!: Fiche[];
 
-    fiche!: Fiche | any ;
+    fiche: Fiche  = {id:0, libelle: "", dateButoire:  new Date("dd/mm/yy"), temps: 0,lieu: "", url:"", note:"", user:{} , tags:[], section: {},tab: {} } ;
 
     selectedFiches!: Fiche[];
 
-   submitted!: boolean;   
+    submitted!: boolean;
+    users!: User[];
+    tags!: Tag[];
+    tableaux!: Tableau[];
+    sections!: Section[];
+
+    userEmail = "";
+    dateButoire!: Date; 
+    tabId  = 0 ;
+    sectionId = 0;
+
+    tagListVisible = false;
+    tagsToShow!: Tag[];
+    
 
     constructor( private kanbanService : KanbanService, private messageService: MessageService, private confirmationService: ConfirmationService) { }
 
     ngOnInit() {
       this.kanbanService.getAllFiches().subscribe((data) => {
         this.fiches = data;
-        console.log("data", data);
       });
+        
+      this.kanbanService.getAllUsers().subscribe((data) => {
+        this.users = data;
+      });
+    
+      this.kanbanService.getAllTags().subscribe((data) => {
+        this.tags = data;
+      });
+        
+      this.kanbanService.getAllSections().subscribe((data) => {
+        this.sections = data;
+      });
+        
+      this.kanbanService.getAllTabs().subscribe((data) => {
+        this.tableaux = data;
+      });
+        
+        
+        
+        
     }
 
     openNew() {
         //this.fiche;
         this.submitted = false;
-        this.ficheDialog = true;
+        this.createFicheDialog = true;
     }
 
     deleteSelectedFiches() {
@@ -59,56 +96,75 @@ export class FicheComponent implements OnInit {
         });
     }
 
+    showEditFicheDialog(fiche: Fiche) {
+        this.userEmail = fiche.user.email;
+        this.tabId = fiche.tab.id; 
+        this.sectionId = fiche.section.id;
+        this.dateButoire = new Date(fiche.dateButoire);  //;
+        this.fiche = fiche ;
+        this.editFicheDialog = true;
+    }
+
     editFiche(fiche: Fiche) {
-        this.fiche = {...fiche};
-        this.ficheDialog = true;
+
+
+        const usersList = this.users.filter(u => u.email === this.userEmail);
+        if (usersList.length != 0) { fiche.user = usersList[0]; }
+         
+        const tabList = this.tableaux.filter(t => t.id == this.tabId);
+        if (tabList.length != 0) { fiche.tab = tabList[0]; }
+        
+        const sectionList = this.sections.filter(s => s.id == this.sectionId);
+        if (sectionList.length != 0) { fiche.section = sectionList[0]; }
+        
+
+
+        this.kanbanService.editFiche(fiche);
+        this.editFicheDialog = false;
+        this.messageService.add({severity:'success', summary: 'Successful', detail: 'Fiche mise à jour', life: 3000});
+
     }
 
     deleteFiche (fiche: Fiche) {
         this.confirmationService.confirm({
-            message: 'Voulez-vous vraiment supprimer la fiche ' + fiche.id + '?',
+            message: 'Voulez-vous vraiment supprimer la fiche ' + fiche.id + ' ?',
             header: 'Confirmation',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-
-               /* console.log("fiche", fiche);
                 this.kanbanService.deleteFiche(fiche.id).subscribe((data) => {
                     this.fiches = data;
                   })  ;
-    */
                   this.fiches = this.fiches.filter(val => val.id !== fiche.id);
+                //this.fiche = {id:0, libelle: "", dateButoire:  new Date(), temps: 0,lieu: "", url:"", note:"", user:{} , tags:{}, section: {},tab: {} } ;
 
-              
-                this.fiche = null;
                 this.messageService.add({severity:'success', summary: 'Successful', detail: 'fiche supprimée', life: 3000});
             }
         });
     }
 
     hideDialog() {
-        this.ficheDialog = false;
+        this.createFicheDialog = false;
+
         this.submitted = false;
     }
     
-    saveFiche() {
+    saveFiche(fiche: Fiche) {
         this.submitted = true;
-
-        if (this.fiche.libelle.trim()) {
-            if (this.fiche.id) {
-                this.fiches[this.findIndexById(this.fiche.id)] = this.fiche;                
-                this.messageService.add({severity:'success', summary: 'Successful', detail: 'Fiche mise à jour', life: 3000});
-            }
-            else {
-                this.fiche.id = this.createId();
-                //this.fiche.image = 'fiche-placeholder.svg';
-                this.fiches.push(this.fiche);
-                this.messageService.add({severity:'success', summary: 'Successful', detail: 'La fiche a été créée', life: 3000});
-            }
-
-            this.fiches = [...this.fiches];
-            this.ficheDialog = false;
-            this.fiche = null;
-        }
+        
+        const usersList = this.users.filter(u => u.email === this.userEmail);
+        if (usersList.length != 0) { fiche.user = usersList[0]; }
+         
+        const tabList = this.tableaux.filter(t => t.id == this.tabId);
+        if (tabList.length != 0) { fiche.tab = tabList[0]; }
+        
+        const sectionList = this.sections.filter(s => s.id == this.sectionId);
+        if (sectionList.length != 0) { fiche.section = sectionList[0]; }
+        
+        //this.fiche =
+        this.kanbanService.saveFiche(fiche);
+        
+        this.fiches.push(this.fiche);
+        this.messageService.add({severity:'success', summary: 'Successful', detail: 'La fiche a été créée', life: 3000});
     }
 
     findIndexById(id: number): number {
@@ -132,6 +188,11 @@ export class FicheComponent implements OnInit {
         */
     
         return id;
+    }
+
+    showTags(fiche:Fiche) {
+        this.tagsToShow = fiche.tags;
+        this.tagListVisible = true;
     }
   
 

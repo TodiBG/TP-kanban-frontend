@@ -7,7 +7,7 @@
 <div class="card">
     <p-toolbar styleClass="p-mb-4">
         <ng-template pTemplate="left">
-            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
+            <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
             <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedFiches()" [disabled]="!selectedFiches || !selectedFiches.length"></button>
         </ng-template>
 
@@ -54,11 +54,13 @@
                 <td>{{fiche.url}}</td>
                 <td>{{fiche.note}}</td>
                 <td>{{fiche.user.email}}</td>
-                <td>Tags</td>
-                <td>Section</td>
-                <td>Tab</td>
                 <td>
-                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="editFiche(fiche)"></button>
+                    <p-button  (click)="showTags(fiche)" [style]="{'background': 'transparent',  'color':'gray'}" label="Tags" badge="{{fiche.tags.length}}" class="p-button-danger" badgeClass="p-badge-secondary"> </p-button>
+                </td>
+                <td>{{fiche.section.libelle}}</td>
+                <td> {{fiche.tab.libelle}} </td>
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="showEditFicheDialog(fiche)"></button>
                     <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteFiche(fiche)"></button>
                 </td>
             </tr>
@@ -71,22 +73,87 @@
     </p-table>
 </div>
 
-<p-dialog [(visible)]="ficheDialog" [style]="{width: '450px'}" header="Details de la fiche" [modal]="true" styleClass="p-fluid">
+<p-dialog [(visible)]="createFicheDialog" [style]="{width: '450px'}" header="Créer une fiche" [modal]="true" styleClass="p-fluid">
     <ng-template pTemplate="content">
         <div class="p-field">
             <label for="libelle">Libellé</label>
             <input type="text" pInputText id="libelle" [(ngModel)]="fiche.libelle" required autofocus />
-            <small class="p-invalid" *ngIf="submitted && !fiche.libelle">Le libellé est obligatoire .</small>
         </div>
-        <div class="p-field">
-            <label for="dateButoire">Date butoire</label>
-            <input type="date" id="dateButoire" pInputTextarea [(ngModel)]="fiche.dateButoire" required />
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="icon">Date butoire</label>
+            <p-calendar [(ngModel)]="fiche.dateButoire" dateFormat="dd/mm/yy" [showIcon]="true" inputId="icon"></p-calendar>
         </div>
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="temps" class="p-col-fixed" >Temps d'execution</label>
+            <div class="p-col">
+                <input id="temps" [(ngModel)]="fiche.temps" type="number" pInputText> 
+            </div>
+        </div>
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="lieu" class="p-col-fixed" >Lieu</label>
+            <div class="p-col">
+                <input id="lieu" [(ngModel)]="fiche.lieu" type="text" pInputText> 
+            </div>
+        </div>
+
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="note" class="p-col-fixed" >Note </label>
+            <div class="p-col">
+                <textarea id="note" [(ngModel)]="fiche.note" pInputTextarea   rows="3" style="width: 100%;"></textarea>
+            </div>
+        </div>
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="note" class="p-col-fixed" >Utilisateur </label>
+                <select class="p-col" [(ngModel)]="userEmail" style="width: 100%;" >
+                    <option [value]="user.email" *ngFor="let user of users">   {{user.prenom}}  {{user.nom}} </option>
+                  </select>
+        </div>
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="note" class="p-col-fixed" >Tags </label>
+            <div class="p-col">
+                <p-multiSelect [options]="tags" [(ngModel)]="fiche.tags" optionLabel="libelle"></p-multiSelect>
+            </div>
+        </div>
+
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="note" class="p-col-fixed" >Tableau </label>
+                <select class="p-col" [(ngModel)]="tabId" style="width: 100%;" required >
+                    <option [value]="tab.id" *ngFor="let tab of tableaux">   {{tab.libelle}} </option>
+                  </select>
+        </div>
+
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="note" class="p-col-fixed" >Section </label>
+                <select class="p-col" [(ngModel)]="sectionId" style="width: 100%;" required >
+                    <option [value]="sect.id" *ngFor="let sect of sections">   {{sect.libelle}} </option>
+                  </select>
+        </div>
+
+
+
+    
+
     </ng-template>
     
     <ng-template pTemplate="footer">
         <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveFiche()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveFiche(fiche)"></button>
     </ng-template>
 </p-dialog>
 
@@ -94,6 +161,120 @@
 <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
 
  
+
+<p-dialog header="Liste des tags" [(visible)]="tagListVisible" [style]="{width: '25vw'}" [resizable] = "true" [baseZIndex]="10000">
+  
+    <p-table [value]="tagsToShow">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Id</th>
+                <th>Libellé</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-tag>
+            <tr>
+                <td>{{tag.id}}</td>
+                <td>{{tag.libelle}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="tagListVisible=false" label="Ok" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+
+<p-dialog [(visible)]="editFicheDialog" [style]="{width: '450px'}" header="Créer une fiche" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="p-field">
+            <label for="libelle">Libellé</label>
+            <input type="text" pInputText id="libelle" [(ngModel)]="fiche.libelle" required autofocus />
+        </div>
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="icon">Date butoire</label>
+            <p-calendar [(ngModel)]="dateButoire" dateFormat="dd/mm/yy" [showIcon]="true" inputId="icon"></p-calendar>
+        </div>
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="temps" class="p-col-fixed" >Temps d'execution</label>
+            <div class="p-col">
+                <input id="temps" [(ngModel)]="fiche.temps" type="number" pInputText> 
+            </div>
+        </div>
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="lieu" class="p-col-fixed" >Lieu</label>
+            <div class="p-col">
+                <input id="lieu" [(ngModel)]="fiche.lieu" type="text" pInputText> 
+            </div>
+        </div>
+
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="note" class="p-col-fixed" >Note </label>
+            <div class="p-col">
+                <textarea id="note" [(ngModel)]="fiche.note" pInputTextarea   rows="3" style="width: 100%;"></textarea>
+            </div>
+        </div>
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="note" class="p-col-fixed" >Utilisateur </label>
+                <select class="p-col" [(ngModel)]="userEmail" style="width: 100%;" >
+
+                    <option    [value]="user.email" *ngFor="let user of users">   {{user.prenom}}  {{user.nom}} </option>
+                  </select>
+        </div>
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="note" class="p-col-fixed" >Tags </label>
+            <div class="p-col">
+                <p-multiSelect [options]="tags" [(ngModel)]="fiche.tags" optionLabel="libelle"></p-multiSelect>
+            </div>
+        </div>
+
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="note" class="p-col-fixed" >Tableau </label>
+                <select class="p-col" [(ngModel)]="tabId" style="width: 100%;" required >
+                    <option [value]="tab.id" *ngFor="let tab of tableaux">   {{tab.libelle}} </option>
+                  </select>
+        </div>
+
+
+        <div class="p-field p-grid">
+            <br>
+            <label for="note" class="p-col-fixed" >Section </label>
+                <select class="p-col" [(ngModel)]="sectionId" style="width: 100%;" required >
+                    <option [value]="sect.id" *ngFor="let sect of sections">   {{sect.libelle}} </option>
+                  </select>
+        </div>
+
+
+
+    
+
+    </ng-template>
+    
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="editFicheDialog=false"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="editFiche(fiche)"></button>
+    </ng-template>
+</p-dialog>
+
+
+
+
+
+
 
 
 

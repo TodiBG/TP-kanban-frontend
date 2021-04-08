@@ -1,16 +1,16 @@
 
 export interface Fiche {
-  id:          number;
+  id  :          number;
   libelle:     string;
   dateButoire: Date;
   temps:       number;
   lieu:        string;
   url:         string;
   note:         string;
-  user:        User;
-  tags:        Tag[];
-  section:     Section;
-  tab:         Tableau;
+  user:        User |any ;
+  tags:        Tag[]|any;
+  section:     Section|any;
+  tab:         Tableau|any;
 }
 
 

@@ -42,6 +42,9 @@ import {InputNumberModule} from 'primeng/inputnumber';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+
+import {CascadeSelectModule} from 'primeng/cascadeselect';
 
 
 @NgModule({
@@ -87,6 +90,8 @@ import { MessageService } from 'primeng/api';
     RadioButtonModule,
     ConfirmDialogModule,
     InputNumberModule,
+    InputTextareaModule,
+    CascadeSelectModule
   ],
 
   
