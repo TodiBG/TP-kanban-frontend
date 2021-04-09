@@ -42,7 +42,10 @@ import {InputNumberModule} from 'primeng/inputnumber';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
+import { PrimeNGConfig } from 'primeng/api';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { DatePipe } from '@angular/common';
+
 
 import {CascadeSelectModule} from 'primeng/cascadeselect';
 
@@ -97,7 +100,11 @@ import {CascadeSelectModule} from 'primeng/cascadeselect';
   
   providers: [
     ConfirmationService,
-    MessageService],
+    MessageService,
+    PrimeNGConfig,
+    DatePipe 
+    
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

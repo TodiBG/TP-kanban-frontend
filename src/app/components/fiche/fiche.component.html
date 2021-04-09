@@ -83,7 +83,7 @@
         <div class="p-field p-grid">
             <br>
             <label for="icon">Date butoire</label>
-            <p-calendar [(ngModel)]="fiche.dateButoire" dateFormat="dd/mm/yy" [showIcon]="true" inputId="icon"></p-calendar>
+            <p-calendar [(ngModel)]="fiche.dateButoire" dateFormat="dd/mm/y"  [showIcon]="true" inputId="icon"></p-calendar>
         </div>
 
         <div class="p-field p-grid">
@@ -145,15 +145,11 @@
                   </select>
         </div>
 
-
-
-    
-
     </ng-template>
     
     <ng-template pTemplate="footer">
         <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveFiche(fiche)"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="createFiche(fiche)"></button>
     </ng-template>
 </p-dialog>
 

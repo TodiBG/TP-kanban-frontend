@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { KanbanService } from '../../services/kanban.service';
 import { Fiche, User, Tag, Tableau, Section } from '../../modeles/kanban';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { formatDate } from '@angular/common';
+import { DatePipe } from '@angular/common';
+import { PrimeNGConfig } from 'primeng/api';
 
 @Component({
   selector: 'app-fiche',
@@ -10,6 +11,7 @@ import { formatDate } from '@angular/common';
   styleUrls: ['./fiche.component.css']
 })
 export class FicheComponent implements OnInit {
+
 
     createFicheDialog = false;
     editFicheDialog = false;
@@ -27,10 +29,10 @@ export class FicheComponent implements OnInit {
     users!: User[];
     tags!: Tag[];
     tableaux!: Tableau[];
-    sections!: Section[];
+    sections!: Section[]; 
 
-    userEmail = "";
-    dateButoire!: Date; 
+    userEmail = "" ;
+    dateButoire : Date =  new Date(1613340000000); 
     tabId  = 0 ;
     sectionId = 0;
 
@@ -38,11 +40,19 @@ export class FicheComponent implements OnInit {
     tagsToShow!: Tag[];
     
 
-    constructor( private kanbanService : KanbanService, private messageService: MessageService, private confirmationService: ConfirmationService) { }
+    constructor( private kanbanService : KanbanService, private messageService: MessageService, private confirmationService: ConfirmationService, private config: PrimeNGConfig, private datePipe: DatePipe) { }
 
     ngOnInit() {
+        this.config.setTranslation({
+            accept: 'Accept',
+            reject: 'Cancel',
+            //translations
+        });
+
       this.kanbanService.getAllFiches().subscribe((data) => {
-        this.fiches = data;
+          this.fiches = data;
+          console.log("getFiches 2", data);
+
       });
         
       this.kanbanService.getAllUsers().subscribe((data) => {
@@ -62,12 +72,10 @@ export class FicheComponent implements OnInit {
       });
         
         
-        
-        
     }
 
     openNew() {
-        //this.fiche;
+        this.dateButoire = new Date(1613340000000);
         this.submitted = false;
         this.createFicheDialog = true;
     }
@@ -83,10 +91,6 @@ export class FicheComponent implements OnInit {
 
                 this.kanbanService.deleteFiche(this.selectedFiches[0].id)
                     
-                    /*.subscribe((data) => {
-                    this.fiches = data;
-                  })  ;
-                  */
 
                 this.fiches = this.fiches.filter(val => !this.selectedFiches.includes(val));
                 this.selectedFiches = [];
@@ -131,11 +135,9 @@ export class FicheComponent implements OnInit {
             header: 'Confirmation',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.kanbanService.deleteFiche(fiche.id).subscribe((data) => {
-                    this.fiches = data;
-                  })  ;
-                  this.fiches = this.fiches.filter(val => val.id !== fiche.id);
-                //this.fiche = {id:0, libelle: "", dateButoire:  new Date(), temps: 0,lieu: "", url:"", note:"", user:{} , tags:{}, section: {},tab: {} } ;
+                this.kanbanService.deleteFiche(fiche.id);
+                this.fiches = this.fiches.filter(val => val.id !== fiche.id);
+                this.fiche = {id:0, libelle: "", dateButoire:  new Date(), temps: 0,lieu: "", url:"", note:"", user:{} , tags:{}, section: {},tab: {} } ;
 
                 this.messageService.add({severity:'success', summary: 'Successful', detail: 'fiche supprimée', life: 3000});
             }
@@ -148,7 +150,7 @@ export class FicheComponent implements OnInit {
         this.submitted = false;
     }
     
-    saveFiche(fiche: Fiche) {
+    createFiche(fiche: Fiche) {
         this.submitted = true;
         
         const usersList = this.users.filter(u => u.email === this.userEmail);
@@ -160,11 +162,13 @@ export class FicheComponent implements OnInit {
         const sectionList = this.sections.filter(s => s.id == this.sectionId);
         if (sectionList.length != 0) { fiche.section = sectionList[0]; }
         
-        //this.fiche =
-        this.kanbanService.saveFiche(fiche);
-        
+        //fiche.dateButoire = this.datePipe.transform(fiche.dateButoire, "dd/mm/yy");
         this.fiches.push(this.fiche);
+        console.log(" tranform fiche", this.datePipe.transform(fiche.dateButoire, "dd/mm/yyyy") );
+        this.kanbanService.saveFiche(fiche); 
         this.messageService.add({severity:'success', summary: 'Successful', detail: 'La fiche a été créée', life: 3000});
+ 
+        this.createFicheDialog = false;
     }
 
     findIndexById(id: number): number {
@@ -195,22 +199,6 @@ export class FicheComponent implements OnInit {
         this.tagListVisible = true;
     }
   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   
 
 }
