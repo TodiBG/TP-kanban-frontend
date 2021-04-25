@@ -51,8 +51,7 @@ export class FicheComponent implements OnInit {
 
       this.kanbanService.getAllFiches().subscribe((data) => {
           this.fiches = data;
-          console.log("getFiches 2", data);
-
+          console.log("fiches :", data);
       });
         
       this.kanbanService.getAllUsers().subscribe((data) => {

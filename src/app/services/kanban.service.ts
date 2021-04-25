@@ -4,15 +4,22 @@ import { Observable, Subject } from 'rxjs';
 import { Fiche, Tag, User, Section, Tableau } from '../modeles/kanban';
 
 
-const base_url = "/kanban-api/";
+const base_url = "kanban-api/";
 
 @Injectable({
   providedIn: 'root'
 })
 export class KanbanService {
+
+  observableFiches = new Subject<Fiche[]>();
+  observableTags = new Subject<Tag[]>();
+  observableUsers = new Subject<User[]>();
+  observableSections = new Subject<Section[]>();
+  observableTabs = new Subject<Tableau[]>();
   
   constructor(private http: HttpClient) {
-    this.http.get<Fiche[]>(base_url + "fiches/").subscribe(data => {
+
+    this.http.get<Fiche[]> (base_url + "fiches/").subscribe(data => {
       this.observableFiches.next(data);
     });
     
@@ -31,22 +38,17 @@ export class KanbanService {
     this.http.get<Tableau[]> (base_url+"tableaux/").subscribe(data => {
       this.observableTabs.next(data);
     });
-    
-   }
 
-  observableFiches = new Subject<Fiche[]>();
-  observableTags = new Subject<Tag[]>();
-  observableUsers = new Subject<User[]>();
-  observableSections = new Subject<Section[]>();
-  observableTabs = new Subject<Tableau[]>();
 
- 
+  }
+  
+
+
+
 
 
   getAllFiches(): Subject<Fiche[]> {
-    
-    console.log("getFiches", this.observableFiches);
-    return this.observableFiches;  
+        return this.observableFiches;  
   }
 
 
@@ -54,12 +56,12 @@ export class KanbanService {
     return this.observableUsers;
   }
 
-  getAllSections():Observable<Section[]> {
+  getAllSections():Subject<Section[]> {
     return this.observableSections; 
   }
 
 
-  getAllTabs():Observable<Tableau[]> {
+  getAllTabs():Subject<Tableau[]> {
     return this.observableTabs; 
   }
 
@@ -155,7 +157,7 @@ export class KanbanService {
 
     });
     
-    this.http.get<Fiche[]>(base_url + "tags/").subscribe(data => {
+    this.http.get<Tag[]>(base_url + "tags/").subscribe(data => {
       this.observableTags.next(data);
      }) ;
     
@@ -165,6 +167,48 @@ export class KanbanService {
 
 
 
+
+createUser(user: User) {
+   const  httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    };
+
+    this.http.post<User>(base_url + "users/create",user, httpOptions).subscribe(reponse => {
+    });
+    
+    this.http.get<User[]>(base_url + "users/").subscribe(data => {
+      //this.observableTags.next(data);
+    });
+  }
+
+
+  editUser(user: User) {
+    console.log("edit user")
+   const  httpOptions = {
+      headers: new HttpHeaders({'Content-Type': 'application/json' })
+    };
+
+    this.http.post<User>(base_url + "users/update/"+user.email,user, httpOptions).subscribe(reponse => {
+    });
+    
+    this.http.get<User[]>(base_url + "users/").subscribe(data => {
+      //this.observableTags.next(data);
+    });
+  }
+
+  deleteUser(email: string) {
+    const  httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    };
+    this.http.put(base_url + "users/delete/" + email, httpOptions).subscribe(reponse => {
+
+    });
+    
+    this.http.get<User[]>(base_url + "users/").subscribe(data => {
+      this.observableUsers.next(data);
+     }) ;
+    
+  }
 
 
 

@@ -10,10 +10,6 @@
             <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
             <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedFiches()" [disabled]="!selectedFiches || !selectedFiches.length"></button>
         </ng-template>
-
-        <ng-template pTemplate="right">
-            <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"></button>
-        </ng-template>
     </p-toolbar>
 
 <br>

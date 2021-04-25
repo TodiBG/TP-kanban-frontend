@@ -1,118 +1,114 @@
-<div class="row content " >
+<div class="content">
 
-    <div id="list-panel-left" class="col-sm-7  ">
 
-        <h3 id="user-list-title"> La liste des utiliateurs </h3>
+  <div class="content">
+    <br> <br>
+     <p-toast></p-toast>
+    
+    <div class="card">
+        <p-toolbar styleClass="p-mb-4">
+            <ng-template pTemplate="left">
+                <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
+                <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedUsers()" [disabled]="!selectedUsers || !selectedUsers.length"></button>
+            </ng-template>
 
-        <table id="user-tab" mat-table [dataSource]="dataSource" class="table" >
-
-            <!-- Position Column -->
-            <ng-container matColumnDef="nom">
-              <th mat-header-cell *matHeaderCellDef> No. </th>
-              <td mat-cell *matCellDef="let element"> {{element.position}} </td>
-            </ng-container>
-        
-            <!-- Name Column -->
-            <ng-container matColumnDef="prenom">
-              <th mat-header-cell *matHeaderCellDef> Nom </th>
-              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-            </ng-container>
-        
-            <!-- Weight Column -->
-            <ng-container matColumnDef="email">
-              <th mat-header-cell *matHeaderCellDef> Prenom </th>
-              <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
-            </ng-container>
-        
-            <!-- Symbol Column -->
-            <ng-container matColumnDef="symbol">
-              <th mat-header-cell *matHeaderCellDef> Email </th>
-              <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
-            </ng-container>
-        
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          </table>
-        
+        </p-toolbar>
+    
+    <br>
+        <p-table #dt [value]="users" [rows]="5" [paginator]="true" [globalFilterFields]="['nom', 'prenom']"
+            [(selection)]="selectedUsers" [rowHover]="true" dataKey="email"
+            currentPageReportTemplate="{first} à {last} des {totalRecords} utilisateurs" [showCurrentPageReport]="true">
+         
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 3rem">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                    <th pSortableColumn="id"> Email  </th>
+                    <th pSortableColumn="nom">Nom  <p-sortIcon field="nom"></p-sortIcon></th>
+                    <th pSortableColumn="prenom">Prénom  <p-sortIcon field="prenom"></p-sortIcon> </th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-user>
+                <tr>
+                    <td>
+                        <p-tableCheckbox [value]="user"></p-tableCheckbox>
+                    </td>
+                    <td>{{user.nom}}</td>
+                    <td>{{user.prenom}}</td>
+                    <td>{{user.email}}</td>
+                    <td>
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="showEditUserDialog(user)"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteUser(user)"></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+                <div class="p-d-flex p-ai-center p-jc-between">
+                    Il y a au total {{users ? users.length : 0 }} utilisateurs.
+                </div>
+            </ng-template>
+        </p-table>
     </div>
+    
+    <p-dialog [(visible)]="createUserDialog" [style]="{width: '450px'}" header="Créer un User" [modal]="true" styleClass="p-fluid">
+        <ng-template pTemplate="content">
+            <div class="p-field">
+                <label for="email">Email</label>
+                <input type="text" pInputText id="email" [(ngModel)]="newUser.email" required autofocus />
+                 <small class="p-invalid" *ngIf="submitted && !newUser.email">L'email est obligatoire </small>
+            </div>
 
+            <div class="p-field">
+              <label for="nom">Nom</label>
+              <input type="text" pInputText id="nom" [(ngModel)]="newUser.nom" required autofocus />
+               <small class="p-invalid" *ngIf="submitted && !newUser.nom">Le nom est obligatoire </small>
+          </div>
 
-
-
-    <div  id="list-panel-right" class="col-sm-5" >
-
-
-      <form class="row">
-
-        <p class="label"> Enregistrer un nouvel utilisateur </p>
-
-        <div class="col-sm-1"> </div>
+          <div class="p-field">
+            <label for="prenom">Prénom</label>
+            <input type="text" pInputText id="prenom" [(ngModel)]="newUser.prenom" required autofocus />
+             <small class="p-invalid" *ngIf="submitted && !newUser.prenom">Le prénom est obligatoire </small>
+        </div>  
+        </ng-template>
         
-        <div class="col-sm-7"> 
-   
-          <div class="form-group">
-            <input name="nom" class="form-control" type="text" placeholder="Nom">
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+            <button pButton pRipple label="Ajouter" icon="pi pi-check" class="p-button-text" (click)="createUser()"></button>
+        </ng-template>
+    </p-dialog>
+    
+
+    <p-dialog [(visible)]="editUserDialog" [style]="{width: '450px'}" header="Modifier l'utilisateur" [modal]="true" styleClass="p-fluid">
+        <ng-template pTemplate="content">
+
+            <div class="p-field">
+              <label for="nom">Nom</label>
+              <input type="text" pInputText id="nom" [(ngModel)]="selectedUser.nom" required autofocus />
+               <small class="p-invalid" *ngIf="submitted && !selectedUser.nom">Le nom est obligatoire </small>
           </div>
 
-          <div class="form-group">
-            <input name="prenom" class="form-control" type="text" placeholder="Prenom">
-          </div>
-          <div class="form-group">
-            <input name="email" class="form-control" type="email" placeholder="Email">
-          </div>
+          <div class="p-field">
+            <label for="prenom">Prénom</label>
+            <input type="text" pInputText id="prenom" [(ngModel)]="selectedUser.prenom" required autofocus />
+             <small class="p-invalid" *ngIf="submitted && !selectedUser.prenom">Le prénom est obligatoire </small>
+        </div>  
 
-        </div>
-
-        <div class="col-sm-4"> 
-          <div class="form-group"><br> <br>
-          </div>
-
-          <div class="form-group">
-            <button type="submit" class="btn btn-primary">Enregister</button>
-
-          </div>
-
-
-        </div>
-
-    </form>
-
-
-      <div class="row">  
-        <table id="fiche-tab" mat-table [dataSource]="dataSource_fiche" class="table col-sm-12" >
-
-          <!-- Position Column -->
-          <ng-container matColumnDef="nom">
-            <th mat-header-cell *matHeaderCellDef> No. </th>
-            <td mat-cell *matCellDef="let element"> {{element.position}} </td>
-          </ng-container>
-      
-          <!-- Name Column -->
-          <ng-container matColumnDef="prenom">
-            <th mat-header-cell *matHeaderCellDef> Nom </th>
-            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-          </ng-container>
-      
-          <!-- Weight Column -->
-          <ng-container matColumnDef="email">
-            <th mat-header-cell *matHeaderCellDef> Prenom </th>
-            <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
-          </ng-container>
-      
-          <!-- Symbol Column -->
-          <ng-container matColumnDef="symbol">
-            <th mat-header-cell *matHeaderCellDef> Email </th>
-            <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
-          </ng-container>
-      
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-      </div>
-
-
+        </ng-template>
+        
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+            <button pButton pRipple label="Valider" icon="pi pi-check" class="p-button-text" (click)="editUser()"></button>
+        </ng-template>
+    </p-dialog>
+    
+    <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+    
     </div>
-
-
+        
+    
 
 </div>
+
+

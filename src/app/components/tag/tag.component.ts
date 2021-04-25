@@ -12,6 +12,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 
 export class TagComponent implements OnInit {
 
+  
   createTagDialog = false;
   editTagDialog = false;
     
@@ -108,8 +109,9 @@ export class TagComponent implements OnInit {
         message: 'Voulez-vous vraiment supprimer le tag ' + tag.id + ' ?',
         header: 'Confirmation',
         icon: 'pi pi-exclamation-triangle',
-        accept: () => {
-            this.kanbanService.deleteTag(tag.id);
+      accept: () => {
+            
+            this.kanbanService.deleteTag(tag.id );
             this.tags = this.tags.filter(val => val.id !== tag.id);
             //this.selectedTag = { id: 0, libelle: "" }; 
 
@@ -118,6 +120,4 @@ export class TagComponent implements OnInit {
     });
 }
     
-
-
 }
