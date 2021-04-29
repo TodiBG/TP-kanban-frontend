@@ -30,6 +30,7 @@ export interface Tableau {
 export interface Section {
   id :      number;
   libelle? : string;
+  tab? :     Tableau|any;
 }
 
 

@@ -56,15 +56,6 @@ export class KanbanService {
     return this.observableUsers;
   }
 
-  getAllSections():Subject<Section[]> {
-    return this.observableSections; 
-  }
-
-
-  getAllTabs():Subject<Tableau[]> {
-    return this.observableTabs; 
-  }
-
 
   deleteFiche(id: number){
    const  httpOptions = {
@@ -165,10 +156,7 @@ export class KanbanService {
 
 
 
-
-
-
-createUser(user: User) {
+  createUser(user: User) {
    const  httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     };
@@ -210,7 +198,95 @@ createUser(user: User) {
     
   }
 
+  getAllSections():Subject<Section[]> {
+    return this.observableSections; 
+  }
 
+  createSection(section: Section) {
+  const  httpOptions = {
+     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+   };
+
+   this.http.post<Section>(base_url + 'sections/create',section, httpOptions).subscribe(reponse => {
+   });
+
+   this.http.get<Section[]>(base_url + 'sections/').subscribe(data => {
+     //this.observableTags.next(data);
+   });
+  }  
+
+
+  editSection(section: Section) {
+  const  httpOptions = {
+     headers: new HttpHeaders({'Content-Type': 'application/json' })
+   };
+
+   this.http.put<Section>(base_url + 'sections/update/'+section.id,section, httpOptions).subscribe(reponse => {
+   });
+
+   this.http.get<Section[]>(base_url + 'sections/').subscribe(data => {
+     //this.observableSections.next(data);
+   });
+  }
+
+  deleteSection(id: number) {
+   const  httpOptions = {
+     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+   };
+   this.http.delete(base_url + 'sections/delete/' + id, httpOptions).subscribe(reponse => {
+
+   });
+
+   this.http.get<Section[]>(base_url + 'sections/').subscribe(data => {
+     this.observableSections.next(data);
+    }) ;
+
+  }
+
+  getAllTabs():Subject<Tableau[]> {
+    return this.observableTabs; 
+  }
+
+  createTab(tab: Tableau) {
+    const  httpOptions = {
+       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+     };
+ 
+     this.http.post<Tableau>(base_url + "tableaux/create",tab, httpOptions).subscribe(reponse => {
+     });
+     
+     this.http.get<Tableau[]>(base_url + "tableaux/").subscribe(data => {
+       //this.observableTags.next(data);
+     });
+   }
+ 
+ 
+   editTab(tab: Tableau) {
+    const  httpOptions = {
+       headers: new HttpHeaders({'Content-Type': 'application/json' })
+     };
+ 
+     this.http.put<Tableau>(base_url + "tableaux/update/"+tab.id,tab, httpOptions).subscribe(reponse => {
+     });
+     
+     this.http.get<Tableau[]>(base_url + "tableaux/").subscribe(data => {
+       //this.observableTabs.next(data);
+     });
+   }
+ 
+   deleteTab(id: number) {
+     const  httpOptions = {
+       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+     };
+     this.http.delete(base_url + "tableaux/delete/" + id, httpOptions).subscribe(reponse => {
+ 
+     });
+     
+     this.http.get<Tableau[]>(base_url + "tableaux/").subscribe(data => {
+       this.observableTabs.next(data);
+      }) ;
+     
+   }
 
 
 }

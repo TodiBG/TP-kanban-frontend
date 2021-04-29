@@ -1,5 +1,96 @@
 
 <div class="content">
-<p>tableau works!</p>
 
-</div>
+
+    <div class="content">
+      <br> <br>
+       <p-toast></p-toast>
+      
+      <div class="card">
+          <p-toolbar styleClass="p-mb-4">
+              <ng-template pTemplate="left">
+                  <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
+                  <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedTabs()" [disabled]="!selectedTabs || !selectedTabs.length"></button>
+              </ng-template>
+  
+          </p-toolbar>
+      
+      <br>
+          <p-table #dt [value]="tabs" [rows]="5" [paginator]="true" [globalFilterFields]="['id','libelle']"
+              [(selection)]="selectedTabs" [rowHover]="true" dataKey="id"
+              currentPageReportTemplate="{first} à {last} des {totalRecords} tableaux" [showCurrentPageReport]="true">
+           
+              <ng-template pTemplate="header">
+                  <tr>
+                      <th style="width: 3rem">
+                          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                      <th pSortableColumn="id">Id  </th>
+                      <th pSortableColumn="libelle">Libellé </th>
+                     
+      
+                      <th></th>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-tab>
+                  <tr>
+                      <td>
+                          <p-tableCheckbox [value]="tab"></p-tableCheckbox>
+                      </td>
+                      <td>{{tab.id}}</td>
+                      <td>{{tab.libelle}}</td>
+                      <td>
+                          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="showEditTabDialog(tab)"></button>
+                          <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteTab(tab)"></button>
+                      </td>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="summary">
+                  <div class="p-d-flex p-ai-center p-jc-between">
+                      Il y a au total {{tabs ? tabs.length : 0 }} tags.
+                  </div>
+              </ng-template>
+          </p-table>
+      </div>
+      
+      <p-dialog [(visible)]="createTabDialog" [style]="{width: '450px'}" header="Créer un tableau" [modal]="true" styleClass="p-fluid">
+          <ng-template pTemplate="content">
+              <div class="p-field">
+                  <label for="libelle">Libellé</label>
+                  <input type="text" pInputText id="libelle" [(ngModel)]="newTab.libelle" required autofocus />
+                   <small class="p-invalid" *ngIf="submitted && !newTab.libelle">Le libellé est obligatoire </small>
+              </div>
+  
+          </ng-template>
+          
+          <ng-template pTemplate="footer">
+              <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+              <button pButton pRipple label="Ajouter" icon="pi pi-check" class="p-button-text" (click)="createTab()"></button>
+          </ng-template>
+      </p-dialog>
+      
+  
+      <p-dialog [(visible)]="editTabDialog" [style]="{width: '450px'}" header="Modifier le tableau" [modal]="true" styleClass="p-fluid">
+          <ng-template pTemplate="content">
+              <div class="p-field">
+                  <label for="libelle">Libellé</label>
+                  <input type="text" pInputText id="libelle" [(ngModel)]="selectedTab.libelle" required autofocus />
+                   <small class="p-invalid" *ngIf="editSubmitted && !newTab.libelle">Le libellé est obligatoire </small>
+              </div>
+  
+          </ng-template>
+          
+          <ng-template pTemplate="footer">
+              <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+              <button pButton pRipple label="Valider" icon="pi pi-check" class="p-button-text" (click)="editTab()"></button>
+          </ng-template>
+      </p-dialog>
+      
+      <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+      
+      </div>
+          
+      
+  
+  </div>
+  

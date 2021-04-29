@@ -1,4 +1,132 @@
-<div class="content">
-<p>section works!</p>
 
-</div>
+<div class="content">
+
+
+    <div class="content">
+      <br> <br>
+       <p-toast></p-toast>
+      
+      <div class="card">
+          <p-toolbar styleClass="p-mb-4">
+              <ng-template pTemplate="left">
+                  <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
+                  <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedSections()" [disabled]="!selectedSections || !selectedSections.length"></button>
+              </ng-template>
+  
+          </p-toolbar>
+      
+      <br>
+          <p-table #dt [value]="sections" [rows]="5" [paginator]="true" [globalFilterFields]="['id','libelle','tableau']"
+              [(selection)]="selectedSections" [rowHover]="true" dataKey="id"
+              currentPageReportTemplate="{first} à {last} des {totalRecords} sections" [showCurrentPageReport]="true">
+           
+              <ng-template pTemplate="header">
+                  <tr>
+                      <th style="width: 3rem">
+                          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                      <th pSortableColumn="id">Id  </th>
+                      <th pSortableColumn="libelle">Libellé </th>
+                      <th pSortableColumn="libelle">Tableau </th>
+                     
+      
+                      <th></th>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-section>
+                  <tr>
+                      <td>
+                          <p-tableCheckbox [value]="section"></p-tableCheckbox>
+                      </td>
+                      <td>{{section.id}}</td>
+                      <td>{{section.libelle}}</td>
+                      <td>{{section.tableau}}</td>
+                      <td>
+                          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="showEditSectionDialog(section)"></button>
+                          <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSection(section)"></button>
+                      </td>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="summary">
+                  <div class="p-d-flex p-ai-center p-jc-between">
+                      Il y a au total {{sections ? sections.length : 0 }} sections.
+                  </div>
+              </ng-template>
+          </p-table>
+      </div>
+      
+      <p-dialog [(visible)]="createSectionDialog" [style]="{width: '450px'}" header="Créer une section" [modal]="true" styleClass="p-fluid">
+          <ng-template pTemplate="content">
+              <div class="p-field">
+                  <label for="libelle">Libellé</label>
+                  <input type="text" pInputText id="libelle" [(ngModel)]="newSection.libelle" required autofocus />
+                   <small class="p-invalid" *ngIf="submitted && !newSection.libelle">Le libellé est obligatoire </small>
+              </div>
+              <div class="p-field p-grid">
+                <br>
+                <label for="tableau" class="p-col-fixed" >Tableau </label>
+                    <select class="p-col" [(ngModel)]="tabId" style="width: 100%;" required >
+                        <option [value]="tab.id" *ngFor="let tab of tableaux">   {{tab.libelle}} </option>
+                      </select>
+                </div>
+  
+          </ng-template>
+          
+          <ng-template pTemplate="footer">
+              <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+              <button pButton pRipple label="Ajouter" icon="pi pi-check" class="p-button-text" (click)="createSection()"></button>
+          </ng-template>
+      </p-dialog>
+      
+  
+      <p-dialog [(visible)]="editSectionDialog" [style]="{width: '450px'}" header="Modifier la section" [modal]="true" styleClass="p-fluid">
+          <ng-template pTemplate="content">
+              <div class="p-field">
+                  <label for="libelle">Libellé</label>
+                  <input type="text" pInputText id="libelle" [(ngModel)]="selectedSection.libelle" required autofocus />
+                   <small class="p-invalid" *ngIf="editSubmitted && !newSection.libelle">Le libellé est obligatoire </small>
+              </div>
+              <div class="p-field p-grid">
+                <br>
+                <label for="tableau" class="p-col-fixed" >Tableau </label>
+                    <select class="p-col" [(ngModel)]="tabId" style="width: 100%;" required >
+                        <option [value]="tab.id" *ngFor="let tab of tableaux">   {{tab.libelle}} </option>
+                      </select>
+            </div>
+  
+          </ng-template>
+          
+          <ng-template pTemplate="footer">
+              <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+              <button pButton pRipple label="Valider" icon="pi pi-check" class="p-button-text" (click)="editSection(newSection)"></button>
+          </ng-template>
+      </p-dialog>
+  
+  
+  
+  
+  
+      
+      <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+      
+       
+      
+      
+      
+            
+      </div>
+          
+      
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </div>
+  
+  
+  
